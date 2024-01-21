@@ -1,4 +1,5 @@
 ﻿
+using VotingSystem.Application.Validator;
 using VotingSystem.Domin;
 
 namespace VotingSystem.Application
@@ -14,9 +15,13 @@ namespace VotingSystem.Application
             voterId = 8790;
             voterList = new List<Voter>();
         }
+
+        // DRY => do not repeat yourself
+
         public Voter AddVoter(Voter voter)
         {
-            if(voter.voterName == "")
+
+            if(VoterValidator.ValidateVoter(voter) == false)
             {
                 return null;
             }
@@ -67,10 +72,11 @@ namespace VotingSystem.Application
             }
 
             /* Validate the Voter */
-            if (voter.voterName == "")
+            if(VoterValidator.ValidateVoter(voter) == false)
             {
                 return null;
             }
+
 
             /* Replace voter in voterList */
             voterList.Remove(v);
