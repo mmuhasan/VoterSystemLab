@@ -1,4 +1,5 @@
-﻿using VotingSystem.Application;
+﻿using Microsoft.VisualBasic.FileIO;
+using VotingSystem.Application;
 using VotingSystem.Domin;
 
 namespace VotingSystem.UnitTests.Application
@@ -158,5 +159,113 @@ namespace VotingSystem.UnitTests.Application
             Assert.NotNull(voters);
             Assert.Equal(2, voters.Count);
         }
+
+        [Fact]
+        void UpdateVoter_ReturnNull_IfVoterNotExists()
+        {
+            //Arrange
+            VotingSystemService service = new VotingSystemService();
+            Voter voter = new Voter()
+            {
+                voterName = "voter1",
+                voterAddress = "voter address",
+                voterDOB = DateTime.Now,
+                voterEmail = ""
+            };
+
+            //Act
+            Voter rVoter = service.UpdateVoter(voter);
+
+            //Assert
+            Assert.Null(rVoter);
+        }
+
+        [Fact]
+        void UpdateVoter_ReturnUpdatedVoter_IfVoterExists()
+        {
+            //Arrange
+            VotingSystemService service = new VotingSystemService();
+            Voter voter = new Voter()
+            {
+                voterName = "voter1",
+                voterAddress = "voter address",
+                voterDOB = DateTime.Now,
+                voterEmail = ""
+            };
+
+            //Act
+            Voter v = service.AddVoter(voter);
+            v.voterName = "voter2";
+            Voter rVoter = service.UpdateVoter(v);
+
+            //Assert
+            Assert.NotNull(rVoter);
+            Assert.Equal(v.voterName, rVoter.voterName);
+        }
+
+        [Fact]
+        void DeleteVoter_ReturnFalse_IfVoterNotExists()
+        {
+            //Arrange
+            VotingSystemService service = new VotingSystemService();
+            Voter voter = new Voter()
+            {
+                voterName = "voter1",
+                voterAddress = "voter address",
+                voterDOB = DateTime.Now,
+                voterEmail = ""
+            };
+
+            //Act
+            Boolean rVoter = service.DeleteVoterById(voter.voterId);
+
+            //Assert
+            Assert.False(rVoter);
+        }
+
+        [Fact]
+        void DeleteVoter_ReturnDeletedVoter_IfVoterExists()
+        {
+            //Arrange
+            VotingSystemService service = new VotingSystemService();
+            Voter voter = new Voter()
+            {
+                voterName = "voter1",
+                voterAddress = "voter address",
+                voterDOB = DateTime.Now,
+                voterEmail = ""
+            };
+
+            //Act
+            Voter v = service.AddVoter(voter);
+            Boolean rVoter = service.DeleteVoterById(v.voterId);
+
+            //Assert
+            Assert.True(rVoter);
+        }
+
+        [Fact]
+        void GetVoter_ReturnNull_AfterDeleteVoter()
+        {
+            //Arrange
+            VotingSystemService service = new VotingSystemService();
+            Voter voter = new Voter()
+            {
+                voterName = "voter1",
+                voterAddress = "voter address",
+                voterDOB = DateTime.Now,
+                voterEmail = ""
+            };
+
+            //Act
+            Voter v = service.AddVoter(voter);
+            Boolean rVoter = service.DeleteVoterById(v.voterId);
+            Voter retVoter = service.GetVoterById(v.voterId);
+
+            //Assert
+            Assert.Null(retVoter);
+            Assert.True(rVoter);
+        }
+
     }
 }
