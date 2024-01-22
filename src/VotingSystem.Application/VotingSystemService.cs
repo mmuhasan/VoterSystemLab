@@ -1,4 +1,5 @@
 ﻿
+using VotingSystem.Application.Validator;
 using VotingSystem.Domin;
 
 namespace VotingSystem.Application
@@ -14,9 +15,13 @@ namespace VotingSystem.Application
             voterId = 8790;
             voterList = new List<Voter>();
         }
+
+        // DRY => do not repeat yourself
+
         public Voter AddVoter(Voter voter)
         {
-            if(voter.voterName == "")
+
+            if(VoterValidator.ValidateVoter(voter) == false)
             {
                 return null;
             }
@@ -27,6 +32,19 @@ namespace VotingSystem.Application
             voter.voterId = voterId;
             voterList.Add(voter);
             return voter;
+        }
+
+        public Boolean DeleteVoterById(uint vid)
+        {
+            /** Remove voter from voterList *
+             * using voter */
+            Voter v = voterList.Find(voter => voter.voterId == vid);
+            if(v == null)
+            {
+                return false;
+            }
+            voterList.Remove(v);
+            return true;
         }
 
         public Voter GetVoterById(uint v)
@@ -41,6 +59,31 @@ namespace VotingSystem.Application
                 return null;
             }
             return voterList;
+        }
+
+        public Voter UpdateVoter(Voter voter)
+        {
+            /** Update voter in voterList *
+             *using voter */
+            Voter v = voterList.Find(voter => voter.voterId == voter.voterId);
+            if(v == null)
+            {
+                return null;
+            }
+
+            /* Validate the Voter */
+            if(VoterValidator.ValidateVoter(voter) == false)
+            {
+                return null;
+            }
+
+
+            /* Replace voter in voterList */
+            voterList.Remove(v);
+            voterList.Add(voter);
+
+            return v;
+
         }
     }
 }
